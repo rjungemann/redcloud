@@ -16,6 +16,12 @@ end
 ensure_in_path 'lib'
 require 'redcloud'
 
+depend_on "moneta"
+depend_on "thin"
+depend_on "sinatra"
+depend_on "uuid"
+depend_on "johnson"
+
 task :default => 'spec:run'
 
 PROJ.name = 'redcloud'
