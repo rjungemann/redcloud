@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+lib_path = File.expand_path(File.join(File.dirname(__FILE__), %w[.. lib]))
+port = (ARGV[0] || 3000).to_i
+
+require File.join(lib_path, "redcloud")
+require 'rubygems'
+require 'sinatra/base'
+require 'johnson'
+require 'moneta'
+require 'moneta/sdbm'
+require 'uuid'
+require 'thin'
+require File.join(lib_path, "service")
+
+db_path = File.join(lib_path, %w[.. db]);
+Dir.mkdir db_path unless File.exists? db_path
+
+$db = Moneta::SDBM.new(:file => File.join(db_path, "db.sdbm"))
+$uuid = UUID.new
+
+Thin::Server.new('0.0.0.0', port, Rack::URLMap.new(
+  "/" => RedCloud.new,
+  "/assets" => Rack::File.new("public")
+)).start!
+
+# EOF
