@@ -21,8 +21,8 @@ class RedCloud < Sinatra::Base
     $db[uuid] = {
       :uuid => uuid,
       :secret => secret,
-      :title => params[:title],
-      :script => params[:script],
+      :title => title,
+      :script => script,
       :created_on => Time.now,
       :last_updated => Time.now
     }
@@ -75,7 +75,18 @@ class RedCloud < Sinatra::Base
     
     raise "Script doesn't exist." if item.nil?
     
-    Johnson.evaluate(item[:script], :params => params, :sessions => session).to_s;
+    result = nil
+    
+    thread = Thread.new do
+      $SAFE = 4
+      result = Johnson.evaluate(item[:script], :params => params, :sessions => session).to_s
+    end
+    
+    if !thread.join(10)
+      thread.kill
+    end
+    
+    result
   end
   
   post "/:uuid" do
@@ -84,6 +95,17 @@ class RedCloud < Sinatra::Base
     
     raise "Script doesn't exist." if item.nil?
     
-    Johnson.evaluate(item[:script], :params => params, :sessions => session).to_s;
+    result = nil
+    
+    thread = Thread.new do
+      $SAFE = 4
+      result = Johnson.evaluate(item[:script], :params => params, :sessions => session).to_s
+    end
+    
+    if !thread.join(10)
+      thread.kill
+    end
+    
+    result
   end
 end

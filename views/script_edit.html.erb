@@ -1,0 +1,28 @@
+<style>
+  .mono, #title, #script {
+    font-family: monospace;
+    font-size: 20px;
+  }
+  #title, #script {
+    width: 600px;
+  }
+  #script {
+    height: 500px;
+  }
+  #submit {
+    vertical-align: bottom;
+  }
+</style>
+
+<form method="post" action="/new">
+  <h1><input type="text" id="title" name="title" value="<%= @item[:title] %>"/></h1>
+  
+  <p class="mono">
+    <b>uuid:</b> <%= @uuid %><br/>
+    <b>secret:</b> <%= @item[:secret] %><br/>
+  </p>
+  
+  <textarea id="script" name="script"><%= @item[:script] %></textarea>
+  
+  <input type="submit" value="Submit" id="submit"/>
+</form>
